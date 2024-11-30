@@ -60,7 +60,6 @@ const CollaborativeRoom = ({
         containerRef.current &&
         !containerRef.current.contains(e.target as Node)
       ) {
-        console.log("--");
         UpdateTitleHandler();
       }
     };

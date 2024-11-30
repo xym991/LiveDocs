@@ -21,6 +21,7 @@ import {
 import Loader from "../Loader";
 import FloatingToolbar from "./plugins/FloatingToolbarPlugin";
 import { useThreads } from "@liveblocks/react/suspense";
+import Comments from "../Comments";
 
 // Placeholder component
 function Placeholder() {
@@ -78,6 +79,7 @@ export function Editor({
           <LiveblocksPlugin>
             <FloatingComposer className="w-[350px]" />
             <FloatingThreads threads={threads} />
+            <Comments />
           </LiveblocksPlugin>
         </div>
       </div>

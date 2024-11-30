@@ -1,33 +1,32 @@
-import { cn } from "@/lib/utils";
-import { useThreads } from "@liveblocks/react";
-import { useIsThreadActive } from "@liveblocks/react-lexical";
-import { Composer, Thread } from "@liveblocks/react-ui";
-import React from "react";
+"use client";
 
-const ThreadWrapper = ({ thread }: ThreadWrapperProps) => {
-  const isActive = useIsThreadActive(thread.id);
-  return (
-    <Thread
-      thread={thread}
-      data-state={isActive ? "active" : null}
-      className={cn(
-        "comment-thread border",
-        isActive && "!border-blue-500 shadow-md",
-        thread.resolved && "opacity-40"
-      )}
-    />
-  );
+import { useThreads } from "@liveblocks/react";
+import { Composer, Thread } from "@liveblocks/react-ui";
+import React, { ReactChildren, ReactNode } from "react";
+import ThreadWrapper from "./ThreadWrapper";
+const ErrorBoundary = ({ children }: { children: ReactNode }) => {
+  try {
+    return children;
+  } catch (error) {
+    console.error("Caught error in ErrorBoundary:", error);
+    return <div>Error rendering component</div>;
+  }
 };
 
 const Comments = () => {
   const { threads } = useThreads();
+
   return (
     <div className="comments-container">
-      <Composer className="comment-composer">
-        {threads?.map((thread) => (
-          <ThreadWrapper key={thread.id} thread={thread} />
-        ))}
-      </Composer>
+      <Composer className="comment-composer"></Composer>
+      {threads?.map((thread, index) => {
+        console.log(thread, index);
+        return (
+          <ErrorBoundary>
+            <ThreadWrapper key={thread.id} thread={thread} />
+          </ErrorBoundary>
+        );
+      })}
     </div>
   );
 };

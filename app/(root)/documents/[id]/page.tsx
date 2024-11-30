@@ -14,9 +14,9 @@ const Document = async ({ params: { id } }: SearchParamProps) => {
   });
   if (!room) redirect("/");
   const userIds = Object.keys(room.usersAccesses);
-  console.log(userIds);
+
   const users = await getClerkUsers({ userIds });
-  console.log(users);
+
   const usersData = users.map((user: User) => ({
     ...user,
     userType: room.usersAccesses[user.email]?.includes("room:write")
