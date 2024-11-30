@@ -1,20 +1,43 @@
+import CollaborativeRoom from "@/components/CollaborativeRoom";
+import { getDocument } from "@/lib/actions/room.actions";
+import { getClerkUsers } from "@/lib/actions/user.actions";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import React from "react";
 
-
-import { Editor } from '@/components/editor/Editor'
-import Header from '@/components/Header'
-import React from 'react'
-
-const Document = () => {
+const Document = async ({ params: { id } }: SearchParamProps) => {
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+  const room = await getDocument({
+    roomId: id,
+    userId: user.emailAddresses[0].emailAddress,
+  });
+  if (!room) redirect("/");
+  const userIds = Object.keys(room.usersAccesses);
+  console.log(userIds);
+  const users = await getClerkUsers({ userIds });
+  console.log(users);
+  const usersData = users.map((user: User) => ({
+    ...user,
+    userType: room.usersAccesses[user.email]?.includes("room:write")
+      ? "editor"
+      : "viewer",
+  }));
+  const currentUserType = room.usersAccesses[
+    user.emailAddresses[0].emailAddress
+  ].includes("room:write")
+    ? "editor"
+    : "viewer";
   return (
-    <div>
-        <Header>
-           <div className="flex w-fit item-center justify-center gap-2">
-            <p className="document-title">Lorem ipsum dolor sit.</p>
-           </div>
-        </Header>
-      <Editor />
-    </div>
-  )
-}
+    <main className="flex w-full flex-col items-center">
+      <CollaborativeRoom
+        roomId={id}
+        roomMetadata={room.metadata}
+        currentUserType={currentUserType}
+        users={usersData}
+      />
+    </main>
+  );
+};
 
-export default Document
+export default Document;

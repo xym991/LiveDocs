@@ -4,6 +4,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import Provider from "./Provider";
 
 // Load the font and set up a CSS variable (--font-inter)
 const inter = Inter({
@@ -38,6 +39,7 @@ export default function RootLayout({
         baseTheme: dark,
         variables: {
           colorPrimary: "#3371ff",
+          fontSize: "16px",
         },
       }}
     >
@@ -45,7 +47,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <Provider>{children}</Provider>
         </body>
       </html>
     </ClerkProvider>
