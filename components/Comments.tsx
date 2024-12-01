@@ -20,7 +20,6 @@ const Comments = () => {
     <div className="comments-container">
       <Composer className="comment-composer"></Composer>
       {threads?.map((thread, index) => {
-        console.log(thread, index);
         return (
           <ErrorBoundary>
             <ThreadWrapper key={thread.id} thread={thread} />

@@ -4,9 +4,6 @@ import { useIsThreadActive } from "@liveblocks/react-lexical";
 import { Thread } from "@liveblocks/react-ui";
 
 const ThreadWrapper = ({ thread }: ThreadWrapperProps) => {
-  console.log("------");
-  console.log("wrapper", thread);
-
   const isActive = useIsThreadActive(thread.id);
   return (
     <Thread

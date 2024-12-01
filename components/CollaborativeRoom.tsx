@@ -17,6 +17,7 @@ import { Input } from "./ui/input";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { updateDocumentTitle } from "@/lib/actions/room.actions";
+import ShareModal from "./ShareModal";
 
 const CollaborativeRoom = ({
   roomId,
@@ -32,7 +33,7 @@ const CollaborativeRoom = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const UpdateTitleHandler = useCallback(async () => {
+  const UpdateTitleHandler = async () => {
     if (!editing) return;
     setLoading(true);
     try {
@@ -47,7 +48,7 @@ const CollaborativeRoom = ({
     }
     setEditing(false);
     setLoading(false);
-  }, [documentTitle]);
+  };
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -115,8 +116,15 @@ const CollaborativeRoom = ({
                   </p>
                 )}
               </div>
+
               <div className="flex flx-1 justify-end gap-2 sm:gap-3">
                 <ActiveCollaborators />
+                <ShareModal
+                  roomId={roomId}
+                  collaborators={users}
+                  creatorId={roomMetadata.creatorId}
+                  currentUserType={currentUserType}
+                />
                 <SignedIn>
                   <UserButton></UserButton>
                 </SignedIn>
