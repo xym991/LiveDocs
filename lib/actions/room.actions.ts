@@ -5,6 +5,7 @@ import { liveblocks } from "../liveblocks";
 import { revalidatePath } from "next/cache";
 import { getAccessType, parseStringify } from "../utils";
 import { redirect } from "next/navigation";
+import { title } from "process";
 
 export const createDocument = async ({
   userId,
@@ -99,7 +100,20 @@ export const updateDocumentAccess = async ({
       usersAccesses,
     });
     if (room) {
-      //trigger notification
+      const notificationid = nanoid();
+      await liveblocks.triggerInboxNotification({
+        userId: email,
+        kind: "$documentAccess",
+        subjectId: notificationid,
+        activityData: {
+          userType,
+          title: `You have been granted ${userType} access to the a document named '${room.metadata.title}' by ${updatedBy.name}`,
+          updatedBy: updatedBy.name,
+          avatar: updatedBy.avatar,
+          email: updatedBy.email,
+        },
+        roomId,
+      });
     }
 
     revalidatePath(`/documents/${roomId}`);
@@ -122,6 +136,7 @@ export const removeCollaborator = async ({
     if (room.metadata.email === email) {
       throw new Error("Cannot remove the creator from the document.");
     }
+
     const updatedRoom = await liveblocks.updateRoom(roomId, {
       usersAccesses: { [email]: null },
     });

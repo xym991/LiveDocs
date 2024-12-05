@@ -6,6 +6,7 @@ import {
   removeCollaborator,
   updateDocumentAccess,
 } from "@/lib/actions/room.actions";
+import { useSelf } from "@liveblocks/react";
 
 const Collaborator = ({
   roomId,
@@ -16,7 +17,9 @@ const Collaborator = ({
 }: CollaboratorProps) => {
   const [userType, setUserType] = useState(collaborator.userType || "viewer");
   const [loading, setLoading] = useState(false);
+  const currentUser = useSelf();
 
+  console.log(creatorId, collaborator.id, currentUser);
   const shareDocumentHandler = async (type: string) => {
     setLoading(true);
     await updateDocumentAccess({
@@ -59,17 +62,27 @@ const Collaborator = ({
         <p className="text-sm text-blue-100">Owner</p>
       ) : (
         <div className="flex items-center">
-          <UserTypeSelector
-            userType={userType}
-            setUserType={setUserType}
-            onClickHandler={shareDocumentHandler}
-          />
-          <Button
-            type="button"
-            onClick={() => removeCollaboratorHandler(collaborator.email)}
-          >
-            Remove
-          </Button>
+          {creatorId === currentUser?.info.id ? (
+            <>
+              <UserTypeSelector
+                userType={userType}
+                setUserType={setUserType}
+                onClickHandler={shareDocumentHandler}
+              />
+
+              <Button
+                type="button"
+                onClick={() => removeCollaboratorHandler(collaborator.email)}
+              >
+                Remove
+              </Button>
+            </>
+          ) : (
+            <p className="text-sm text-blue-100">
+              {(userType == "viewer" && "can view") ||
+                (userType == "editor" && "can edit")}
+            </p>
+          )}
         </div>
       )}
     </li>
